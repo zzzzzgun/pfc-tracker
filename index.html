@@ -58,6 +58,107 @@ textarea { resize: vertical; min-height: 60px; }
 .gram-input { width: 70px !important; }
 .tag { font-size: 11px; padding: 2px 7px; border-radius: 99px; background: #f0f0f0; color: #888; border: 1px solid #e8e8e8; }
 .tag-custom { background: #e8f2fc; color: #378ADD; border-color: #b8d8f8; }
+
+/* ===== 食品追加フロー改善 ===== */
+.food-quick-list { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.food-quick-btn {
+  font-size: 12px; padding: 5px 10px; border-radius: 99px;
+  border: 1px solid #ddd; background: #fff; color: #444;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: all 0.12s;
+}
+.food-quick-btn:hover, .food-quick-btn.selected {
+  background: #1a1a1a; color: #fff; border-color: #1a1a1a;
+}
+.food-add-row {
+  display: flex; align-items: center; gap: 8px;
+  background: #f8f8f8; border-radius: 10px; padding: 10px 12px;
+  margin-bottom: 10px;
+}
+.food-add-name { flex: 1; font-size: 13px; font-weight: 500; color: #1a1a1a; }
+.food-add-name small { display: block; font-size: 11px; color: #999; font-weight: 400; margin-top: 1px; }
+.gram-row { display: flex; align-items: center; gap: 6px; }
+.gram-row input { width: 62px !important; text-align: center; }
+.gram-row span { font-size: 13px; color: #888; }
+.search-area { margin-bottom: 8px; position: relative; }
+.search-area input { padding-right: 32px; }
+.search-clear {
+  position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+  background: none; border: none; color: #bbb; font-size: 16px;
+  cursor: pointer; line-height: 1; padding: 0;
+  display: none;
+}
+
+/* ===== URL共有 / Export/Import UI ===== */
+.data-section { margin-bottom: 16px; }
+.data-section-title {
+  font-size: 13px; font-weight: 600; color: #555;
+  margin-bottom: 8px; padding-bottom: 6px;
+  border-bottom: 1px solid #f0f0f0;
+}
+.btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.btn-export {
+  background: #fff; color: #1a1a1a;
+  border: 1.5px solid #1a1a1a; border-radius: 8px;
+  padding: 9px 16px; font-size: 13px; cursor: pointer;
+  font-family: inherit; display: flex; align-items: center; gap: 6px;
+  transition: background 0.15s;
+}
+.btn-export:hover { background: #f5f5f5; }
+.btn-import {
+  background: #378ADD; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 9px 16px; font-size: 13px; cursor: pointer;
+  font-family: inherit; display: flex; align-items: center; gap: 6px;
+  transition: opacity 0.15s;
+}
+.btn-import:hover { opacity: 0.85; }
+.import-note {
+  font-size: 12px; color: #888; margin-top: 6px; line-height: 1.5;
+}
+.import-note strong { color: #c44; }
+.data-stats {
+  display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px;
+}
+.data-stat-chip {
+  font-size: 12px; background: #f5f5f5; border-radius: 6px;
+  padding: 4px 10px; color: #666;
+}
+.data-stat-chip strong { color: #1a1a1a; font-weight: 600; }
+.danger-zone {
+  border: 1px solid #fde0e0; border-radius: 10px;
+  padding: 12px 14px; background: #fffafa;
+}
+.danger-zone-title { font-size: 12px; color: #c44; font-weight: 600; margin-bottom: 8px; }
+.btn-reset {
+  background: #fff; color: #c44;
+  border: 1.5px solid #c44; border-radius: 8px;
+  padding: 7px 14px; font-size: 13px; cursor: pointer;
+  font-family: inherit;
+}
+.btn-reset:hover { background: #fde0e0; }
+.btn-url {
+  background: #1a1a1a; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 12px 18px; font-size: 14px; cursor: pointer;
+  font-family: inherit; display: flex; align-items: center; gap: 8px;
+  width: 100%; justify-content: center;
+  transition: opacity 0.15s;
+}
+.btn-url:hover { opacity: 0.85; }
+.backup-text-box {
+  width: 100%; font-size: 11px; font-family: monospace;
+  background: #f5f5f5; border: 1px solid #e0e0e0; border-radius: 8px;
+  padding: 10px; color: #555; resize: none; height: 80px;
+  margin-top: 10px; line-height: 1.4;
+}
+.restore-text-box {
+  width: 100%; font-size: 11px; font-family: monospace;
+  background: #fff; border: 1px solid #ddd; border-radius: 8px;
+  padding: 10px; color: #333; resize: none; height: 80px;
+  margin-top: 10px; line-height: 1.4;
+}
+.restore-text-box:focus { border-color: #378ADD; outline: none; }
 </style>
 </head>
 <body>
@@ -72,6 +173,7 @@ textarea { resize: vertical; min-height: 60px; }
     <button class="tab" onclick="showTab('foods')">食品DB</button>
     <button class="tab" onclick="showTab('history')">履歴</button>
     <button class="tab" onclick="showTab('graph')">グラフ</button>
+    <button class="tab" onclick="showTab('data')">データ管理</button>
   </div>
 
   <!-- 記録タブ -->
@@ -80,8 +182,8 @@ textarea { resize: vertical; min-height: 60px; }
       <div class="card">
         <p class="section-title">体重・体脂肪</p>
         <div class="fg"><label>日付</label><input type="date" id="inp-date"></div>
-        <div class="fg"><label>体重 (kg)</label><input type="number" id="inp-weight" step="0.1" placeholder="70.0"></div>
-        <div class="fg"><label>体脂肪率 (%)</label><input type="number" id="inp-fat" step="0.1" placeholder="20.0"></div>
+        <div class="fg"><label>体重 (kg)</label><input type="number" id="inp-weight" step="0.1" placeholder="70.0" inputmode="decimal"></div>
+        <div class="fg"><label>体脂肪率 (%)</label><input type="number" id="inp-fat" step="0.1" placeholder="20.0" inputmode="decimal"></div>
       </div>
       <div class="card">
         <p class="section-title">PFC合計</p>
@@ -107,13 +209,33 @@ textarea { resize: vertical; min-height: 60px; }
 
     <div class="card">
       <p class="section-title">食品を選んで追加</p>
-      <div class="food-search">
-        <input type="text" id="food-search" placeholder="食品名で検索...">
-        <select id="food-select"></select>
-        <input type="number" class="gram-input" id="food-gram" step="1" value="100">
-        <span style="font-size:13px;color:#888;line-height:36px;">g</span>
-        <button class="btn" onclick="addFoodToMeal()">追加</button>
+
+      <!-- クイック選択（よく使う食品） -->
+      <div style="margin-bottom:8px;">
+        <label style="margin-bottom:6px;">⭐ よく使う食品</label>
+        <div class="food-quick-list" id="food-quick-list"></div>
       </div>
+
+      <!-- 検索 -->
+      <div class="search-area">
+        <input type="text" id="food-search" placeholder="食品名で検索（例：鶏、卵）">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()">×</button>
+      </div>
+      <select id="food-select" size="4" style="height:auto;border-radius:8px;padding:4px 0;margin-bottom:10px;"></select>
+
+      <!-- 選択中の食品 + グラム入力 -->
+      <div class="food-add-row" id="food-add-row" style="display:none;">
+        <div class="food-add-name">
+          <span id="food-selected-name">—</span>
+          <small id="food-selected-macro"></small>
+        </div>
+        <div class="gram-row">
+          <input type="number" id="food-gram" step="1" value="100" inputmode="numeric">
+          <span>g</span>
+          <button class="btn" onclick="addFoodToMeal()">追加</button>
+        </div>
+      </div>
+
       <div id="meal-list"><p style="font-size:13px;color:#aaa;">食品を追加するとここに表示されます</p></div>
     </div>
 
@@ -162,6 +284,72 @@ textarea { resize: vertical; min-height: 60px; }
     <div class="card"><p class="chart-label">体脂肪率推移 (%)</p><div style="position:relative;height:160px;"><canvas id="chart-fat"></canvas></div></div>
     <div class="card"><p class="chart-label">PFCバランス（直近7日平均）</p><div id="pfc-detail"><p class="empty-state">データを入力するとバランスが表示されます</p></div></div>
   </div>
+
+  <!-- ===== データ管理タブ ===== -->
+  <div id="tab-data" style="display:none;">
+
+    <!-- 現在のデータ概要 -->
+    <div class="card">
+      <p class="section-title">データ概要</p>
+      <div class="data-stats" id="data-stats">
+        <div class="data-stat-chip">記録 <strong id="stat-records">0</strong> 件</div>
+        <div class="data-stat-chip">カスタム食品 <strong id="stat-foods">0</strong> 件</div>
+        <div class="data-stat-chip">最古の記録 <strong id="stat-oldest">—</strong></div>
+        <div class="data-stat-chip">最新の記録 <strong id="stat-latest">—</strong></div>
+      </div>
+    </div>
+
+    <!-- テキストコピーでバックアップ（スマホ向けメイン手段） -->
+    <div class="card">
+      <div class="data-section">
+        <p class="data-section-title">📋 バックアップ（テキストをコピー）</p>
+        <p style="font-size:13px;color:#666;margin-bottom:10px;line-height:1.6;">
+          データを文字列に変換してコピーします。<br>
+          LINEの「自分へのメッセージ」やメモ帳に貼り付けて保存してください。
+        </p>
+        <button class="btn-url" onclick="generateBackupText()">
+          <span>📋</span> バックアップ文字列を生成してコピー
+        </button>
+        <textarea class="backup-text-box" id="backup-text-box" readonly placeholder="ボタンを押すとここに文字列が表示されます"></textarea>
+        <div class="save-msg" id="backup-msg"></div>
+      </div>
+    </div>
+
+    <!-- テキスト貼り付けで復元 -->
+    <div class="card">
+      <div class="data-section">
+        <p class="data-section-title">📥 復元（テキストを貼り付け）</p>
+        <p style="font-size:13px;color:#666;margin-bottom:6px;line-height:1.6;">
+          保存しておいた文字列をここに貼り付けて「読み込む」を押してください。
+        </p>
+        <textarea class="restore-text-box" id="restore-text-box" placeholder="バックアップ文字列をここに貼り付け..."></textarea>
+        <div style="margin-top:8px;">
+          <button class="btn-import" onclick="restoreFromText()">
+            <span>✅</span> 読み込む
+          </button>
+        </div>
+        <p class="import-note" style="margin-top:8px;">
+          ※ 同じ日付のデータは上書き、新しい日付のデータは追加されます<br>
+          ※ カスタム食品も復元されます（重複はスキップ）
+        </p>
+        <div class="save-msg" id="restore-msg"></div>
+      </div>
+    </div>
+
+    <!-- 危険ゾーン -->
+    <div class="card">
+      <p class="data-section-title" style="color:#c44;font-size:13px;font-weight:600;margin-bottom:8px;">⚠️ 危険な操作</p>
+      <div class="danger-zone">
+        <p class="danger-zone-title">全データを削除する</p>
+        <p style="font-size:12px;color:#888;margin-bottom:10px;line-height:1.5;">
+          記録・カスタム食品をすべて削除します。<strong style="color:#c44;">この操作は元に戻せません。</strong><br>
+          実行前に必ずエクスポートしてください。
+        </p>
+        <button class="btn-reset" onclick="resetAllData()">すべてのデータを削除</button>
+      </div>
+    </div>
+
+  </div>
 </div>
 
 <script>
@@ -203,18 +391,99 @@ document.getElementById('inp-date').value = getToday();
 
 function calcKcal(p,f,c) { return Math.round((p||0)*4+(f||0)*9+(c||0)*4); }
 
-document.getElementById('food-search').addEventListener('input', filterFoods);
+// ===== よく使う食品（localStorageで使用頻度追跡） =====
+let foodFreq = JSON.parse(localStorage.getItem('pfc-v3-freq') || '{}');
+
+function trackFreq(foodId) {
+  foodFreq[foodId] = (foodFreq[foodId] || 0) + 1;
+  localStorage.setItem('pfc-v3-freq', JSON.stringify(foodFreq));
+}
+
+function renderQuickFoods() {
+  const el = document.getElementById('food-quick-list');
+  // 使用頻度上位5件
+  const top = Object.entries(foodFreq)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([id]) => allFoods().find(f => f.id === id))
+    .filter(Boolean);
+
+  if (!top.length) {
+    el.innerHTML = '<span style="font-size:12px;color:#bbb;">食品を追加すると、よく使うものがここに表示されます</span>';
+    return;
+  }
+  el.innerHTML = top.map(f =>
+    `<button class="food-quick-btn" onclick="selectFood('${f.id}')">${f.name}</button>`
+  ).join('');
+}
+
+function selectFood(id) {
+  const food = allFoods().find(f => f.id === id);
+  if (!food) return;
+
+  // セレクトボックスの選択を合わせる
+  const sel = document.getElementById('food-select');
+  for (let opt of sel.options) {
+    if (opt.value === id) { opt.selected = true; break; }
+  }
+
+  updateFoodAddRow(food);
+
+  // クイックボタンのselectedスタイル
+  document.querySelectorAll('.food-quick-btn').forEach(b => b.classList.remove('selected'));
+  event?.target?.classList?.add('selected');
+}
+
+function updateFoodAddRow(food) {
+  if (!food) {
+    document.getElementById('food-add-row').style.display = 'none';
+    return;
+  }
+  const kcalPer = calcKcal(food.p, food.f, food.c);
+  document.getElementById('food-selected-name').textContent = food.name;
+  document.getElementById('food-selected-macro').textContent =
+    `基準${food.base}g｜P${food.p} F${food.f} C${food.c} (${kcalPer}kcal)`;
+  document.getElementById('food-gram').value = food.base;
+  document.getElementById('food-add-row').style.display = 'flex';
+}
+
+document.getElementById('food-search').addEventListener('input', function() {
+  filterFoods();
+  document.getElementById('search-clear').style.display = this.value ? 'block' : 'none';
+});
+
+document.getElementById('food-select').addEventListener('change', function() {
+  const food = allFoods().find(f => f.id === this.value);
+  updateFoodAddRow(food || null);
+});
+
+function clearSearch() {
+  document.getElementById('food-search').value = '';
+  document.getElementById('search-clear').style.display = 'none';
+  filterFoods();
+}
 
 function filterFoods() {
   const q = document.getElementById('food-search').value.toLowerCase();
   const sel = document.getElementById('food-select');
+  const prevVal = sel.value;
   sel.innerHTML = '';
-  allFoods().filter(f => f.name.toLowerCase().includes(q)).forEach(f => {
+  const filtered = allFoods().filter(f => f.name.toLowerCase().includes(q));
+  filtered.forEach(f => {
     const opt = document.createElement('option');
     opt.value = f.id;
-    opt.textContent = f.name + '（基準' + f.base + 'g）';
+    opt.textContent = f.name + `（基準${f.base}g）`;
     sel.appendChild(opt);
   });
+  // 選択を復元
+  if (prevVal && filtered.find(f => f.id === prevVal)) {
+    sel.value = prevVal;
+  } else if (filtered.length) {
+    sel.value = filtered[0].id;
+    updateFoodAddRow(filtered[0]);
+  } else {
+    updateFoodAddRow(null);
+  }
 }
 
 function addFoodToMeal() {
@@ -230,6 +499,8 @@ function addFoodToMeal() {
     f: Math.round(food.f * ratio * 10) / 10,
     c: Math.round(food.c * ratio * 10) / 10,
   });
+  trackFreq(food.id);
+  renderQuickFoods();
   renderMeal();
 }
 
@@ -295,8 +566,9 @@ function saveRecord() {
 
 function flash(msg, id='save-msg') {
   const el = document.getElementById(id);
+  if (!el) return;
   el.textContent = msg;
-  setTimeout(()=>el.textContent='', 2200);
+  setTimeout(()=>{ if(el) el.textContent=''; }, 2200);
 }
 
 function deleteRecord(date) {
@@ -426,17 +698,190 @@ function renderGraph() {
 
 function avg(arr) { return arr.length ? Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) : 0; }
 
+// ===== データ管理タブ =====
+
+function renderDataStats() {
+  document.getElementById('stat-records').textContent = records.length;
+  document.getElementById('stat-foods').textContent = customFoods.length;
+  if (records.length) {
+    document.getElementById('stat-oldest').textContent = records[0].date;
+    document.getElementById('stat-latest').textContent = records[records.length-1].date;
+  } else {
+    document.getElementById('stat-oldest').textContent = '—';
+    document.getElementById('stat-latest').textContent = '—';
+  }
+}
+
+function exportData(mode) {
+  let payload, filename;
+  const ts = getToday();
+
+  if (mode === 'all') {
+    payload = {
+      version: 'pfc-v3',
+      exportedAt: new Date().toISOString(),
+      records,
+      customFoods,
+    };
+    filename = 'pfc-backup-' + ts + '.json';
+  } else {
+    payload = {
+      version: 'pfc-v3',
+      exportedAt: new Date().toISOString(),
+      records,
+      customFoods: [],
+    };
+    filename = 'pfc-records-' + ts + '.json';
+  }
+
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const data = JSON.parse(e.target.result);
+
+      // バリデーション
+      if (!data.version || !data.version.startsWith('pfc-v3')) {
+        flash('このファイルはPFC Trackerのバックアップファイルではありません', 'import-msg');
+        return;
+      }
+      if (!Array.isArray(data.records)) {
+        flash('ファイルの形式が正しくありません', 'import-msg');
+        return;
+      }
+
+      let addedRecords = 0, updatedRecords = 0, addedFoods = 0;
+
+      // レコードをマージ（同日付は上書き）
+      data.records.forEach(incoming => {
+        const idx = records.findIndex(r => r.date === incoming.date);
+        if (idx >= 0) { records[idx] = incoming; updatedRecords++; }
+        else { records.push(incoming); addedRecords++; }
+      });
+      records.sort((a, b) => a.date.localeCompare(b.date));
+
+      // カスタム食品をマージ（同IDはスキップ）
+      if (Array.isArray(data.customFoods)) {
+        data.customFoods.forEach(incoming => {
+          if (!customFoods.find(f => f.id === incoming.id)) {
+            customFoods.push(incoming);
+            addedFoods++;
+          }
+        });
+      }
+
+      persist();
+      renderHistory();
+      renderFoodDB();
+      filterFoods();
+      renderDataStats();
+
+      const msg = `インポート完了：記録 +${addedRecords}件追加 / ${updatedRecords}件更新`
+        + (addedFoods ? `、カスタム食品 +${addedFoods}件` : '');
+      flash(msg, 'import-msg');
+
+    } catch (err) {
+      flash('ファイルの読み込みに失敗しました（JSONが壊れている可能性があります）', 'import-msg');
+    }
+
+    // ファイル選択をリセット（同じファイルを再度選べるように）
+    event.target.value = '';
+  };
+  reader.readAsText(file);
+}
+
+function resetAllData() {
+  if (!confirm('すべての記録とカスタム食品を削除します。\nこの操作は元に戻せません。\n\n本当に削除しますか？')) return;
+  if (!confirm('最終確認：本当に全データを削除しますか？')) return;
+  records = [];
+  customFoods = [];
+  persist();
+  renderHistory();
+  renderFoodDB();
+  filterFoods();
+  renderDataStats();
+  flash('全データを削除しました', 'restore-msg');
+}
+
+// ===== テキストコピーバックアップ =====
+
+function generateBackupText() {
+  if (!records.length && !customFoods.length) {
+    flash('保存されたデータがありません', 'backup-msg'); return;
+  }
+  const payload = JSON.stringify({ version: 'pfc-v3', records, customFoods });
+  const encoded = 'PFCBK:' + btoa(unescape(encodeURIComponent(payload)));
+
+  const box = document.getElementById('backup-text-box');
+  box.value = encoded;
+
+  // クリップボードにコピー
+  navigator.clipboard.writeText(encoded).then(() => {
+    flash('コピーしました！LINEの「自分へのメッセージ」やメモ帳に貼り付けて保存してください📱', 'backup-msg');
+  }).catch(() => {
+    // フォールバック
+    box.select();
+    document.execCommand('copy');
+    flash('コピーしました！貼り付けて保存してください', 'backup-msg');
+  });
+}
+
+function restoreFromText() {
+  const raw = document.getElementById('restore-text-box').value.trim();
+  if (!raw) { flash('文字列を貼り付けてください', 'restore-msg'); return; }
+
+  try {
+    if (!raw.startsWith('PFCBK:')) throw new Error('invalid prefix');
+    const payload = JSON.parse(decodeURIComponent(escape(atob(raw.slice(6)))));
+    if (!payload.version?.startsWith('pfc-v3') || !Array.isArray(payload.records)) {
+      throw new Error('invalid format');
+    }
+
+    let added = 0, updated = 0, foods = 0;
+    payload.records.forEach(r => {
+      const idx = records.findIndex(x => x.date === r.date);
+      if (idx >= 0) { records[idx] = r; updated++; } else { records.push(r); added++; }
+    });
+    records.sort((a, b) => a.date.localeCompare(b.date));
+    if (Array.isArray(payload.customFoods)) {
+      payload.customFoods.forEach(f => {
+        if (!customFoods.find(x => x.id === f.id)) { customFoods.push(f); foods++; }
+      });
+    }
+    persist(); renderHistory(); renderFoodDB(); filterFoods(); renderDataStats();
+    document.getElementById('restore-text-box').value = '';
+    flash(`読み込み完了：記録+${added}件追加/${updated}件更新` + (foods ? `、食品+${foods}件` : ''), 'restore-msg');
+  } catch (e) {
+    flash('文字列が正しくありません。コピーが途中で切れていないか確認してください', 'restore-msg');
+  }
+}
+
+
 function showTab(t) {
-  ['record','foods','history','graph'].forEach(id => {
+  ['record','foods','history','graph','data'].forEach(id => {
     document.getElementById('tab-'+id).style.display = id===t ? '' : 'none';
   });
   document.querySelectorAll('.tab').forEach((el,i) => {
-    el.classList.toggle('active', ['record','foods','history','graph'][i]===t);
+    el.classList.toggle('active', ['record','foods','history','graph','data'][i]===t);
   });
   if (t==='graph') renderGraph();
+  if (t==='data') renderDataStats();
 }
 
 filterFoods();
+renderQuickFoods();
 renderFoodDB();
 renderHistory();
 </script>
